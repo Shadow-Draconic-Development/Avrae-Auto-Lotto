@@ -4,4 +4,4 @@ Table of contents within this content library
 ## Aliases
 - `lotto`: [Markdown](/Code/lotto.md)
     - `lotto import`: [Markdown](/Code/import/import.md)
-    - `lotto list`: [Markdown](/Code/list/list.md)  
+    - `lotto list <page number>`: [Markdown](/Code/list/list.md)  
