@@ -1,0 +1,117 @@
+embed
+<drac2>
+
+def select_reward(rewards: dict) -> str:
+    """
+    Select a reward based on its weight from a given magic item JSON structure.
+
+    Args:
+        magic_item (dict): A dictionary containing the `rewards` structure.
+
+    Returns:
+        str: The selected reward
+    """
+    
+    # Grab random number from 1 to total weight in reward
+    random_number = randint(1, sum(reward["weight"] for reward in rewards.values()))
+
+    # Set cumulative weight to 0
+    cumulative_weight = 0
+
+    # For each reward in the rewards
+    for reward_number, reward_data in rewards.items():
+
+        # Add cumulative weight by selected reward weight
+        cumulative_weight += reward_data["weight"]
+
+        # If random number less than or greater than cumulative weight, return result reward
+        if random_number <= cumulative_weight:
+            return reward_data["text"]
+
+
+def collect_reward(svar_dict: dict) -> str:
+    """
+    Collect a reward based on the given svar_dict, handling multiple dice rolls.
+
+    Args:
+        svar_dict (dict): A dictionary containing the `lotto_dict` structure.
+
+    Returns:
+        str: The selected reward string with all dice rolls processed
+    """
+    reward_str = select_reward(svar_dict)
+    
+    # While there are patterns in the string
+    while "{" in reward_str and "}" in reward_str:
+        # Extract the pattern
+        dice_to_roll = reward_str.split("{", 1)[1].split("}", 1)[0]
+        message_part1 = reward_str.split("{", 1)[0]
+        message_part2 = reward_str.split("}", 1)[1]
+
+        # If "d" is in the pattern, it's a dice roll
+        if "d" in dice_to_roll.lower():
+            try:
+                split_list = dice_to_roll.split("d")
+
+                if len(split_list) == 1:
+                    dice_to_roll = f"1d{int(split_list[0])}"
+                else:
+                    int(split_list[0])  # Validate number of dice
+                    int(split_list[1])  # Validate dice sides
+
+            except:
+                # Replace invalid dice with error message
+                reward_str = message_part1 + "{" + "`ERROR: Invalid Dice`" + "}" + message_part2
+                continue
+
+            # Roll the dice and replace the pattern
+            dice_result = vroll(dice_to_roll).total
+            reward_str = f"{message_part1}**{dice_result}**{message_part2}"
+        
+        else:
+            # If no 'd' found, remove the braces and keep the content
+            reward_str = f"{message_part1}(`ERROR: Missing Dice`){message_part2}"
+
+    return reward_str
+
+
+def main() -> tuple(str, str, str, str):
+    """
+    Main program function
+
+    Return:
+        str: Title
+        str: Main body paragraph
+        str: Hex color code
+        str: Image URL
+    """
+
+    # Set footer
+    footer = f"{ctx.prefix}lotto | 3/29/25 | ShadowsStride"
+
+    # If SVAR dict is found, load it
+    if (svar_dict := get_svar("lotto_dict")):
+        svar_dict = load_json(svar_dict)
+
+    # If SVAR dict is not found, return error message
+    else:
+        return "You Have Been Sneak Attacked by an Error", "SVAR (`lotto_dict`) not found", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/error.png"
+
+    # If SVAR dict is empty, return error message
+    if len(svar_dict.keys()) < 1:
+        return "You Have Been Sneak Attacked by an Error", "SVAR (`lotto_dict`) is empty", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/error.png"
+
+
+    return "Auto Lotto", f"You have earned the following:\n\n{collect_reward(svar_dict)}", "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png"
+    
+
+# Main program execution
+title, f, color, thumb = main()
+
+
+</drac2>
+-title "{{title}}"
+-f "{{f}}"
+-color "{{color}}"
+-thumb "{{thumb}}"
+-footer "{{ctx.prefix}}lotto | 3/27/25 | ShadowsStride"

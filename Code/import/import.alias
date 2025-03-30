@@ -1,0 +1,66 @@
+multiline
+<drac2>
+
+
+def main(input_dict: dict, prefix: str, footer: str) -> tuple(str, str):
+    """
+    Main program function
+
+    Args:
+        input_dict (dict): Input dictionary
+        prefix (str): Command prefix
+        footer (str): Footer text
+
+    Return:
+        str: Embed string
+        str: SVAR string  
+    """
+
+    # If SVAR dict is found, load it
+    if (svar_dict := get_svar("lotto_dict")):
+        svar_dict = load_json(svar_dict)
+
+    # If no SVAR dict is found, create an empty one
+    else:
+        svar_dict = {}
+
+    # Merge the input dictionary with the existing one
+    svar_dict = svar_dict | input_dict
+
+    # For each key, value in the dictionary
+    for key, value in svar_dict.copy().items():
+        
+        # If the key is a string, then remove key
+        if value == "":
+            svar_dict.pop(key)
+
+        # If the key is a dictionary
+        else:
+
+            # If the proper keys are not present, remove the key
+            if ["text", "weight"] != list(value.keys()):
+                svar_dict.pop(key)
+
+    return f"{prefix}embed -title 'Import Successful' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png' -footer '{footer}'", f"{prefix}svar lotto_dict {dump_json(svar_dict)}"
+        
+# Gather inputs
+input_list = &ARGS&
+
+# Store prefix
+prefix = ctx.prefix
+
+# Set footer
+footer = f"{prefix}lotto import [JSON string] | 3/29/25 | ShadowsStride"
+
+# If no input is provided, return error message
+if len(input_list) < 1:
+    embed_str, svar_str = f"{prefix}embed -title 'You Have Been Sneak Attacked by an Error' -f 'No input provided' -color '#CF142B' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/error.png' -footer '{footer}'", ""
+
+# If input is provided
+else:
+    embed_str, svar_str = main(load_json(input_list[0]), prefix, footer)
+
+
+</drac2>
+{{embed_str}}
+{{svar_str}}

@@ -1,0 +1,48 @@
+embed
+<drac2>
+
+
+def main() -> tuple(str, str, str, str):
+    """
+    Main program function
+
+    Return:
+        str: Title
+        str: Main body paragraph
+        str: Color hex code
+        str: Image URL
+    """
+
+    # Get the current value of the svar_dict
+    svar_dict = get_svar("lotto_dict")
+    
+    # If svar_dict is not empty, load it as a JSON object
+    if svar_dict:
+        svar_dict = load_json(svar_dict)
+    else:
+        return "You Have Been Sneak Attacked by an Error", "SVAR (`lotto_dict`) not found", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/error.png"
+
+    # If SVAR dict is empty
+    if len(svar_dict.keys()) < 1:
+        return "Lotto List", "SVAR (`lotto_dict`) is empty", "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png"
+
+    # Create output list
+    output_list = []
+
+    # For each key, value pair add to output list
+    for key, value in svar_dict.items():
+        output_list.append(f"**{key}:**\n- {value['text']}\n- (Weight: {value['weight']})\n")
+
+    return "Lotto List", "\n".join(output_list), "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png"
+
+
+# Main program execution
+title, f, color, thumb = main()
+
+
+</drac2>
+-title "{{title}}"
+-f "{{f}}"
+-color "{{color}}"
+-thumb "{{thumb}}"
+-footer "{{ctx.prefix}}lotto list | 3/28/25 | ShadowsStride"

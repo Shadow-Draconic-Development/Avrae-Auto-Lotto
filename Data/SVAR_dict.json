@@ -1,0 +1,10 @@
+{
+    "reward1": {
+        "text": "This is a test reward",
+        "weight": 10
+    },
+    "reward2": {
+        "text": "This is a test reward giving {1d4} items",
+        "weight": 10
+    }
+}
