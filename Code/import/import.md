@@ -3,7 +3,7 @@
 Allows users (requires administrative privileges) to import settings from generated JSONs to SVAR.
 
 ## Setting import
-[Reward Generator](https://shadow-draconic-development.github.io/Avrae-Auto-Lotto/) is where you go to generate custom decks.
+[Reward Generator](https://shadow-draconic-development.github.io/Avrae-Auto-Lotto/) is where you go to generate rewards.
 
 - `Add Reward` - Creates a new reward with the following
     - `Reward Name` - This is just for indexing sake and for you to edit the rewards in the future.
