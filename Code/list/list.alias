@@ -1,17 +1,29 @@
 embed
 <drac2>
 
-
-def main() -> tuple(str, str, str, str):
+def main(input_list: list[str]) -> tuple[str, str, str, str]:
     """
-    Main program function
+    Main program function with pagination based on character length.
 
-    Return:
-        str: Title
-        str: Main body paragraph
-        str: Color hex code
-        str: Image URL
+    Args:
+        input_list (list[str]): List containing inputs
+
+    Returns:
+        tuple[str, str, str, str]: Title, Main body paragraph, Color hex code, Image URL
     """
+
+    # If no input is provided, default to page 1
+    if len(input_list) < 1:
+        page = 1
+
+    # If input is provided, verify integer input
+    else:
+
+        try:
+            page = int(input_list[0])
+
+        except:
+            return "You Have Been Sneak Attacked by an Error", "Invalid page number", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/error.png"
 
     # Get the current value of the svar_dict
     svar_dict = get_svar("lotto_dict")
@@ -26,23 +38,60 @@ def main() -> tuple(str, str, str, str):
     if len(svar_dict.keys()) < 1:
         return "Lotto List", "SVAR (`lotto_dict`) is empty", "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png"
 
-    # Create output list
-    output_list = []
+    # Character limit
+    CHAR_LIMIT = 500
 
-    # For each key, value pair add to output list
+    # Create output entries
+    output_entries = []
     for key, value in svar_dict.items():
-        output_list.append(f"**{key}:**\n- {value['text']}\n- (Weight: {value['weight']})\n")
+        entry = f"**{key}:**\n- {value['text']}\n- Weight: {value['weight']}\n"
+        output_entries.append(entry)
 
-    return "Lotto List", "\n".join(output_list), "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png"
+    # Split entries into pages based on character length
+    pages = []
+    current_page = []
+    current_length = 0
 
+    for entry in output_entries:
+        entry_length = len(entry)
+        # Account for the newline character added by join later
+        if current_page:
+            entry_length += 1  # For the "\n" between entries
+
+        if current_length + entry_length <= CHAR_LIMIT:
+            current_page.append(entry)
+            current_length += entry_length
+        else:
+            if current_page:  # If there's content, add it as a page
+                pages.append(current_page)
+            current_page = [entry]  # Start a new page with this entry
+            current_length = len(entry)
+
+    # Add the last page if it has content
+    if current_page:
+        pages.append(current_page)
+
+    # Handle page selection
+    total_pages = len(pages)
+
+    # Adjust page number to be 1-based and within bounds
+    page = max(1, min(page, total_pages))  # Clamp page between 1 and total_pages
+
+    # Prepare the output for the selected page
+    page_content = "\n".join(pages[page - 1])
+    title = f"Lotto List (Page {page}/{total_pages})"
+
+    return title, page_content, "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Auto-Lotto/refs/heads/main/Data/images/main.png"
 
 # Main program execution
-title, f, color, thumb = main()
+title, f, color, thumb = main(&ARGS&)
 
+# Because Avrae is dumb and interprets "<>" as a command/tag/whatever, we need to escape it with a variable. This is a workaround for the issue.
+l = "<"
 
 </drac2>
 -title "{{title}}"
 -f "{{f}}"
 -color "{{color}}"
 -thumb "{{thumb}}"
--footer "{{ctx.prefix}}lotto list | 3/28/25 | ShadowsStride"
+-footer "{{ctx.prefix}}lotto list {{l}}page number> | 3/29/25 | ShadowsStride"
