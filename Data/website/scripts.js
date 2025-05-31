@@ -33,7 +33,7 @@ function updateJSON() {
   const rewardElements = document.querySelectorAll('.deck');
   
   rewardElements.forEach((element) => {
-    const name = element.querySelector('.reward-name').value || `reward${rewardCount}`;
+    const name = element.querySelector('.reward-name').value || `reward`;
     const text = element.querySelector('.reward-text').value;
     const weight = parseInt(element.querySelector('.reward-weight').value) || 0;
     
@@ -49,7 +49,7 @@ function updateJSON() {
     }
   });
   
-  const jsonString = JSON.stringify(output, null).replace(/'/g, "\\'").replace(/‘/g, "\\'").replace(/’/g, "\\'").replace(/‛/g, "\\'");; // Use regex for compatibility
+  const jsonString = JSON.stringify(rewards, null).replace(/'/g, "\\'").replace(/‘/g, "\\'").replace(/’/g, "\\'").replace(/‛/g, "\\'");; // Use regex for compatibility
   jsonOutput.value = `'${jsonString}'`;
 }
 
