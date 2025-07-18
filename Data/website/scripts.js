@@ -13,7 +13,7 @@ function createRewardElement() {
       <legend>Reward</legend>
       <input type="text" class="reward-name" placeholder="Reward name (e.g. reward1)">
       <input type="text" class="reward-text" placeholder="Reward description (supports inline rolling, simply use {} around dice e.g. {1d6})">
-      <input type="number" class="reward-weight" placeholder="Weight (0 if you are wanting to remove the reward)" min="0" value="10">
+      <input type="number" class="reward-weight" placeholder="Weight (0 if you are wanting to remove the reward)" min="1" value="1">
       <button class="remove-reward">Remove</button>
     </fieldset>
   `;
@@ -49,7 +49,7 @@ function updateJSON() {
     }
   });
   
-  const jsonString = JSON.stringify(output, null).replace(/'/g, "´"); // Use regex for compatibility
+  const jsonString = JSON.stringify(output, null).replace(/'/g, "\\'").replace(/‘/g, "\\'").replace(/’/g, "\\'").replace(/‛/g, "\\'");; // Use regex for compatibility
   jsonOutput.value = `'${jsonString}'`;
 }
 
