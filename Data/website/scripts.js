@@ -49,9 +49,8 @@ function updateJSON() {
     }
   });
   
-  // Keep double quotes in JSON, wrap in single quotes. Ensure that single quotes are allowed in import process
-  const jsonString = `'${JSON.stringify(rewards).replaceAll("'", "\\'")}'`;
-  jsonOutput.value = jsonString;
+  const jsonString = JSON.stringify(output, null).replace(/'/g, "´"); // Use regex for compatibility
+  jsonOutput.value = `'${jsonString}'`;
 }
 
 addRewardBtn.addEventListener('click', createRewardElement);
