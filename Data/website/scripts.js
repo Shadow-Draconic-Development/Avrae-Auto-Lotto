@@ -49,7 +49,7 @@ function updateJSON() {
     }
   });
   
-  const jsonString = JSON.stringify(rewards, null).replace(/'/g, "\\'").replace(/‘/g, "\\'").replace(/’/g, "\\'").replace(/‛/g, "\\'");; // Use regex for compatibility
+  const jsonString = JSON.stringify(rewards).replace(/['‘’‚‛]/g, "\\'");; // Use regex for compatibility
   jsonOutput.value = `'${jsonString}'`;
 }
 
@@ -57,13 +57,21 @@ addRewardBtn.addEventListener('click', createRewardElement);
 
 rewardsContainer.addEventListener('input', updateJSON);
 
-copyBtn.addEventListener('click', () => {
-  jsonOutput.select();
-  document.execCommand('copy');
-  copyBtn.textContent = 'Copied!';
-  setTimeout(() => {
-    copyBtn.textContent = 'Copy to Clipboard';
-  }, 2000);
+copyBtn.addEventListener('click', async () => {
+  try {
+    jsonOutput.select();
+    await navigator.clipboard.writeText(jsonOutput.value);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      copyBtn.textContent = 'Copy to Clipboard';
+    }, 2000);
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+    copyBtn.textContent = 'Copy Failed';
+    setTimeout(() => {
+      copyBtn.textContent = 'Copy to Clipboard';
+    }, 2000);
+  }
 });
 
 // Theme handling
